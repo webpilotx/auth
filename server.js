@@ -20,12 +20,34 @@ const JWT_EXPIRATION = "30d";
 
 app.post("/auth/api/register", async (req, res) => {
   const { username, password, confirmPassword } = req.body;
-  if (!username || !password || !confirmPassword) {
-    return res.status(400).send("All fields are required.");
+
+  // Validate username
+  if (!username || username.length < 3 || username.length > 20) {
+    return res
+      .status(400)
+      .send("Username must be between 3 and 20 characters long.");
   }
+
+  // Validate password
+  if (
+    !password ||
+    password.length < 8 ||
+    !/[A-Z]/.test(password) ||
+    !/[a-z]/.test(password) ||
+    !/[0-9]/.test(password)
+  ) {
+    return res
+      .status(400)
+      .send(
+        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number."
+      );
+  }
+
+  // Validate confirmPassword
   if (password !== confirmPassword) {
     return res.status(400).send("Passwords do not match.");
   }
+
   const [existingUser] = await db
     .select()
     .from(usersTable)
@@ -44,13 +66,22 @@ app.post("/auth/api/register", async (req, res) => {
     .setExpirationTime(JWT_EXPIRATION)
     .sign(JWT_SECRET);
 
-  res.status(201).json({ message: "User registered successfully.", token }); // Return JWT
+  res.status(201).json({ message: "User registered successfully.", token });
 });
 
 app.post("/auth/api/login", async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) {
-    return res.status(400).send("All fields are required.");
+
+  // Validate username
+  if (!username || username.length < 3 || username.length > 20) {
+    return res
+      .status(400)
+      .send("Username must be between 3 and 20 characters long.");
+  }
+
+  // Validate password
+  if (!password || password.length < 8) {
+    return res.status(400).send("Password must be at least 8 characters long.");
   }
 
   const [user] = await db

@@ -57,6 +57,19 @@ function LoginForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (formData.username.length < 3 || formData.username.length > 20) {
+      setMessage("Username must be between 3 and 20 characters long.");
+      setMessageType("error");
+      return;
+    }
+    if (formData.password.length < 8) {
+      setMessage("Password must be at least 8 characters long.");
+      setMessageType("error");
+      return;
+    }
+
     fetch("/auth/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -126,6 +139,31 @@ function RegisterForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (formData.username.length < 3 || formData.username.length > 20) {
+      setMessage("Username must be between 3 and 20 characters long.");
+      setMessageType("error");
+      return;
+    }
+    if (
+      formData.password.length < 8 ||
+      !/[A-Z]/.test(formData.password) ||
+      !/[a-z]/.test(formData.password) ||
+      !/[0-9]/.test(formData.password)
+    ) {
+      setMessage(
+        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number."
+      );
+      setMessageType("error");
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setMessage("Passwords do not match.");
+      setMessageType("error");
+      return;
+    }
+
     fetch("/auth/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -32,7 +32,7 @@ This is a simple authentication app built with React. It provides user login and
 2. **Install Dependencies**:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Environment Variables**:
@@ -44,19 +44,21 @@ This is a simple authentication app built with React. It provides user login and
 
 4. **Run the Development Server**:
 
-   ```bash
-   npm run dev
+   ```bashs
+   pnpm run dev
    ```
 
-5. **Build for Production**:
+5. **Build for Production** (Client-Side Only):
 
    ```bash
-   npm run build
+   pnpm run build
    ```
 
-6. **Start the Production Server**:
+6. **Start the Server**:
+   After building the client-side, run the server using:
+
    ```bash
-   npm run preview
+   node server.js
    ```
 
 ## API Endpoints

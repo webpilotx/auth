@@ -57,7 +57,7 @@ function LoginForm() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!turnstileToken) {
@@ -72,26 +72,22 @@ function LoginForm() {
       return;
     }
 
-    fetch("/auth/api/login", {
+    const response = await fetch("/auth/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...formData, turnstileToken }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            setMessage(text);
-            setMessageType("error");
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data && data.token) {
-          localStorage.setItem("token", data.token);
-          window.location.href = "/";
-        }
-      });
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      setMessage(errorText);
+      setMessageType("error");
+      return;
+    }
+
+    const data = await response.json();
+    localStorage.setItem("token", data.token);
+    window.location.href = "/";
   };
 
   const handleTurnstileVerify = useCallback((token) => {
@@ -146,7 +142,7 @@ function RegisterForm() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!turnstileToken) {
@@ -178,26 +174,26 @@ function RegisterForm() {
       return;
     }
 
-    fetch("/auth/api/register", {
+    const response = await fetch("/auth/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...formData, turnstileToken }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            setMessage(text);
-            setMessageType("error");
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data && data.token) {
-          localStorage.setItem("token", data.token);
-          window.location.href = "/";
-        }
-      });
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      if (errorText.includes("Username already exists")) {
+        setMessage("This username is already taken.");
+      } else {
+        setMessage(errorText);
+      }
+      setMessageType("error");
+      return;
+    }
+
+    const data = await response.json();
+    localStorage.setItem("token", data.token);
+    window.location.href = "/";
   };
 
   const handleTurnstileVerify = useCallback((token) => {

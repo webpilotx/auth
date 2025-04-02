@@ -22,7 +22,6 @@
     "@vitejs/plugin-react": "^4.3.4",
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
-    "cookie-parser": "^1.4.7",
     "drizzle-kit": "^0.30.6",
     "express": "^5.1.0",
     "globals": "^15.15.0",

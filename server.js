@@ -1,25 +1,28 @@
 import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
 import "dotenv/config";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import express from "express";
-import { SignJWT } from "jose";
+import fs from "fs";
+import { importPKCS8, SignJWT } from "jose";
+import fetch from "node-fetch";
 import ViteExpress from "vite-express";
 import { usersTable } from "./schema.js";
-import fetch from "node-fetch";
 
 const db = drizzle(process.env.DB_FILE_NAME);
 const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cookieParser());
 
-const JWT_SECRET = Buffer.from(process.env.JWT_SECRET, "hex");
 const JWT_EXPIRATION = "30d";
 const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY;
+
+const PRIVATE_KEY = await importPKCS8(
+  fs.readFileSync(process.env.PRIVATE_KEY_PATH, "utf8"),
+  "RS256"
+);
 
 async function verifyTurnstileToken(token) {
   const response = await fetch(
@@ -88,9 +91,9 @@ app.post("/auth/api/register", async (req, res) => {
       username,
       createdAt: user.createdAt,
     })
-      .setProtectedHeader({ alg: "HS256" })
+      .setProtectedHeader({ alg: "RS256" })
       .setExpirationTime(JWT_EXPIRATION)
-      .sign(JWT_SECRET);
+      .sign(PRIVATE_KEY);
 
     res.status(201).json({ message: "User registered successfully.", token });
   } catch (error) {
@@ -130,9 +133,9 @@ app.post("/auth/api/login", async (req, res) => {
     username,
     createdAt: user.createdAt,
   })
-    .setProtectedHeader({ alg: "HS256" })
+    .setProtectedHeader({ alg: "RS256" })
     .setExpirationTime(JWT_EXPIRATION)
-    .sign(JWT_SECRET);
+    .sign(PRIVATE_KEY);
 
   res.json({ token });
 });

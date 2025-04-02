@@ -72,16 +72,9 @@ app.post("/auth/api/register", async (req, res) => {
 app.post("/auth/api/login", async (req, res) => {
   const { username, password } = req.body;
 
-  // Validate username
-  if (!username || username.length < 3 || username.length > 20) {
-    return res
-      .status(400)
-      .send("Username must be between 3 and 20 characters long.");
-  }
-
-  // Validate password
-  if (!password || password.length < 8) {
-    return res.status(400).send("Password must be at least 8 characters long.");
+  // Simplified validation
+  if (!username || !password) {
+    return res.status(400).send("Username and password are required.");
   }
 
   const [user] = await db

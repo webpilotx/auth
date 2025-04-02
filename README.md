@@ -45,19 +45,25 @@ This is a simple authentication app built with React. It provides user login and
    JWT_SECRET=<your-jwt-secret>
    ```
 
-4. **Run the Development Server**:
+4. **Run Database Migrations**:
+
+   ```bash
+   pnpm drizzle-kit migrate:apply
+   ```
+
+5. **Run the Development Server**:
 
    ```bash
    pnpm run dev
    ```
 
-5. **Build for Production** (Client-Side Only):
+6. **Build for Production** (Client-Side Only):
 
    ```bash
    pnpm run build
    ```
 
-6. **Start the Server**:
+7. **Start the Server**:
    After building the client-side, run the server using:
 
    ```bash

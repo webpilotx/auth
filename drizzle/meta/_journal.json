@@ -15,6 +15,13 @@
       "when": 1743575782063,
       "tag": "0001_modern_corsair",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1743583730272,
+      "tag": "0002_abandoned_master_mold",
+      "breakpoints": true
     }
   ]
 }

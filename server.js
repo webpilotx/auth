@@ -8,6 +8,7 @@ import express from "express";
 import { SignJWT } from "jose";
 import ViteExpress from "vite-express";
 import { usersTable } from "./schema.js";
+import fetch from "node-fetch";
 
 const db = drizzle(process.env.DB_FILE_NAME);
 const PORT = process.env.PORT || 3000;
@@ -18,9 +19,30 @@ app.use(cookieParser());
 
 const JWT_SECRET = Buffer.from(process.env.JWT_SECRET, "hex");
 const JWT_EXPIRATION = "30d";
+const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY;
+
+async function verifyTurnstileToken(token) {
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        secret: TURNSTILE_SECRET_KEY,
+        response: token,
+      }),
+    }
+  );
+  const data = await response.json();
+  return data.success;
+}
 
 app.post("/auth/api/register", async (req, res) => {
-  const { username, password, confirmPassword } = req.body;
+  const { username, password, confirmPassword, turnstileToken } = req.body;
+
+  if (!turnstileToken || !(await verifyTurnstileToken(turnstileToken))) {
+    return res.status(400).send("Turnstile verification failed.");
+  }
 
   if (!username || username.length < 3 || username.length > 20) {
     return res
@@ -68,7 +90,11 @@ app.post("/auth/api/register", async (req, res) => {
 });
 
 app.post("/auth/api/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, turnstileToken } = req.body;
+
+  if (!turnstileToken || !(await verifyTurnstileToken(turnstileToken))) {
+    return res.status(400).send("Turnstile verification failed.");
+  }
 
   if (!username || !password) {
     return res.status(400).send("Username and password are required.");

@@ -183,13 +183,21 @@ function RegisterForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...formData, turnstileToken }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            setMessage(text);
+            setMessageType("error");
+          });
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data && data.token) {
           localStorage.setItem("token", data.token);
           window.location.href = "/";
         } else {
-          setMessage("Registration failed.");
+          setMessage("An unknown error occurred.");
           setMessageType("error");
         }
       });

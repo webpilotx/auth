@@ -33,6 +33,11 @@ async function verifyTurnstileToken(token) {
       }),
     }
   );
+
+  if (!response.ok) {
+    throw new Error(`Turnstile verification failed: ${response.statusText}`);
+  }
+
   const data = await response.json();
   return data.success;
 }

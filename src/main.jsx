@@ -18,16 +18,21 @@ function LoginForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.token) {
           localStorage.setItem("token", data.token);
           setMessage("Login successful.");
-        } else {
-          setMessage("Login failed.");
         }
       })
-      .catch(() => setMessage("An error occurred."));
+      .catch((error) => setMessage(error.message)); // Display server error message
   };
 
   return (

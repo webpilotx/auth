@@ -18,8 +18,15 @@ function LoginForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     })
-      .then((response) => response.text())
-      .then((text) => setMessage(text))
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem("token", data.token); // Store JWT in localStorage
+          setMessage("Login successful.");
+        } else {
+          setMessage("Login failed.");
+        }
+      })
       .catch(() => setMessage("An error occurred."));
   };
 
@@ -89,8 +96,15 @@ function RegisterForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     })
-      .then((response) => response.text())
-      .then((text) => setMessage(text))
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          setMessage(data.message);
+        } else {
+          setMessage("Registration failed.");
+        }
+      })
       .catch(() => setMessage("An error occurred."));
   };
 

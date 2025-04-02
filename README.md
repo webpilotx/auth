@@ -48,7 +48,7 @@ This is a simple authentication app built with React. It provides user login and
 4. **Run Database Migrations**:
 
    ```bash
-   npx drizzle-kit migrate:apply
+   npx drizzle-kit migrate
    ```
 
 5. **Run the Development Server**:

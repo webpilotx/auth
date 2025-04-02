@@ -2,6 +2,6 @@
 
 git pull
 pnpm install
-pnpm run migrate
+npx run migrate
 pnpm run build
 sudo systemctl restart auth.service

@@ -73,21 +73,17 @@ function LoginForm() {
       .then((response) => {
         if (!response.ok) {
           return response.text().then((text) => {
-            throw new Error(text);
+            setMessage(text);
+            setMessageType("error");
           });
         }
         return response.json();
       })
       .then((data) => {
-        if (data.token) {
+        if (data && data.token) {
           localStorage.setItem("token", data.token);
-          setMessage("Login successful.");
-          setMessageType("success");
+          window.location.href = "/";
         }
-      })
-      .catch((error) => {
-        setMessage(error.message);
-        setMessageType("error");
       });
   };
 
@@ -166,18 +162,13 @@ function RegisterForm() {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.token) {
+        if (data && data.token) {
           localStorage.setItem("token", data.token);
-          setMessage(data.message);
-          setMessageType("success");
+          window.location.href = "/";
         } else {
           setMessage("Registration failed.");
           setMessageType("error");
         }
-      })
-      .catch(() => {
-        setMessage("An error occurred.");
-        setMessageType("error");
       });
   };
 

@@ -19,12 +19,15 @@ function Input({ label, type, name, value, onChange, required }) {
   );
 }
 
-function Button({ children, onClick, type = "button", className }) {
+function Button({ children, onClick, type = "button", className, disabled }) {
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${className}`}
+      disabled={disabled}
+      className={`w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      } ${className}`}
     >
       {children}
     </button>
@@ -51,6 +54,7 @@ function LoginForm() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("error");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -59,16 +63,19 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     if (!turnstileToken) {
       setMessage("Please complete the Turnstile verification.");
       setMessageType("error");
+      setIsSubmitting(false);
       return;
     }
 
     if (!formData.username || !formData.password) {
       setMessage("Username and password are required.");
       setMessageType("error");
+      setIsSubmitting(false);
       return;
     }
 
@@ -82,6 +89,7 @@ function LoginForm() {
       const errorText = await response.text();
       setMessage(errorText);
       setMessageType("error");
+      setIsSubmitting(false);
       return;
     }
 
@@ -120,7 +128,9 @@ function LoginForm() {
             onVerify={handleTurnstileVerify}
           />
         </div>
-        <Button type="submit">Login</Button>
+        <Button type="submit" disabled={!turnstileToken || isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Login"}
+        </Button>
       </form>
       {message && <Alert message={message} type={messageType} />}
     </div>
@@ -136,6 +146,7 @@ function RegisterForm() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("error");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -144,16 +155,19 @@ function RegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     if (!turnstileToken) {
       setMessage("Please complete the Turnstile verification.");
       setMessageType("error");
+      setIsSubmitting(false);
       return;
     }
 
     if (formData.username.length < 3 || formData.username.length > 20) {
       setMessage("Username must be between 3 and 20 characters long.");
       setMessageType("error");
+      setIsSubmitting(false);
       return;
     }
     if (
@@ -166,11 +180,13 @@ function RegisterForm() {
         "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number."
       );
       setMessageType("error");
+      setIsSubmitting(false);
       return;
     }
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords do not match.");
       setMessageType("error");
+      setIsSubmitting(false);
       return;
     }
 
@@ -188,6 +204,7 @@ function RegisterForm() {
         setMessage(errorText);
       }
       setMessageType("error");
+      setIsSubmitting(false);
       return;
     }
 
@@ -234,7 +251,9 @@ function RegisterForm() {
             onVerify={handleTurnstileVerify}
           />
         </div>
-        <Button type="submit">Register</Button>
+        <Button type="submit" disabled={!turnstileToken || isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Register"}
+        </Button>
       </form>
       {message && <Alert message={message} type={messageType} />}
     </div>

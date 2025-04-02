@@ -40,11 +40,14 @@ This is a simple authentication app built with React. It provides user login and
 
    ```
    VITE_TURNSTILE_SITEKEY=<your-turnstile-sitekey>
+   TURNSTILE_SECRET_KEY=<your-turnstile-secret-key>
+   DB_FILE_NAME=<path-to-your-database-file>
+   JWT_SECRET=<your-jwt-secret>
    ```
 
 4. **Run the Development Server**:
 
-   ```bashs
+   ```bash
    pnpm run dev
    ```
 

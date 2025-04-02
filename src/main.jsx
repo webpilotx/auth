@@ -11,19 +11,16 @@ function LoginForm() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("/auth/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const text = await response.text();
-      setMessage(text);
-    } catch (error) {
-      setMessage("An error occurred.");
-    }
+    fetch("/auth/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.text())
+      .then((text) => setMessage(text))
+      .catch(() => setMessage("An error occurred."));
   };
 
   return (
@@ -85,19 +82,16 @@ function RegisterForm() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("/auth/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const text = await response.text();
-      setMessage(text);
-    } catch (error) {
-      setMessage("An error occurred.");
-    }
+    fetch("/auth/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.text())
+      .then((text) => setMessage(text))
+      .catch(() => setMessage("An error occurred."));
   };
 
   return (

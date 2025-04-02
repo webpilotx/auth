@@ -78,19 +78,27 @@ app.post("/auth/api/register", async (req, res) => {
 
   try {
     await db.insert(usersTable).values({ username, passwordHash });
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.username, username));
+
+    const token = await new SignJWT({
+      username,
+      createdAt: user.createdAt,
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime(JWT_EXPIRATION)
+      .sign(JWT_SECRET);
+
+    res.status(201).json({ message: "User registered successfully.", token });
   } catch (error) {
     if (error.message.includes("UNIQUE constraint failed:")) {
       return res.status(400).send("Username already exists.");
     }
     throw error;
   }
-
-  const token = await new SignJWT({ username })
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime(JWT_EXPIRATION)
-    .sign(JWT_SECRET);
-
-  res.status(201).json({ message: "User registered successfully.", token });
 });
 
 app.post("/auth/api/login", async (req, res) => {
@@ -118,7 +126,10 @@ app.post("/auth/api/login", async (req, res) => {
     return res.status(401).send("Invalid username or password.");
   }
 
-  const token = await new SignJWT({ username })
+  const token = await new SignJWT({
+    username,
+    createdAt: user.createdAt,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(JWT_EXPIRATION)
     .sign(JWT_SECRET);

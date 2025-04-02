@@ -10,6 +10,7 @@ import ViteExpress from "vite-express";
 import { usersTable } from "./schema.js";
 
 const db = drizzle(process.env.DB_FILE_NAME);
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(bodyParser.json());
@@ -95,4 +96,6 @@ app.post("/auth/api/login", async (req, res) => {
   res.json({ token });
 });
 
-ViteExpress.listen(app, 3000, () => console.log("Server is listening..."));
+ViteExpress.listen(app, PORT, () =>
+  console.log(`Server is listening on port ${PORT}`)
+);

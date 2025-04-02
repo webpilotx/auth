@@ -21,14 +21,12 @@ const JWT_EXPIRATION = "30d";
 app.post("/auth/api/register", async (req, res) => {
   const { username, password, confirmPassword } = req.body;
 
-  // Validate username
   if (!username || username.length < 3 || username.length > 20) {
     return res
       .status(400)
       .send("Username must be between 3 and 20 characters long.");
   }
 
-  // Validate password
   if (
     !password ||
     password.length < 8 ||
@@ -43,7 +41,6 @@ app.post("/auth/api/register", async (req, res) => {
       );
   }
 
-  // Validate confirmPassword
   if (password !== confirmPassword) {
     return res.status(400).send("Passwords do not match.");
   }
@@ -72,7 +69,6 @@ app.post("/auth/api/register", async (req, res) => {
 app.post("/auth/api/login", async (req, res) => {
   const { username, password } = req.body;
 
-  // Simplified validation
   if (!username || !password) {
     return res.status(400).send("Username and password are required.");
   }

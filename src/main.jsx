@@ -58,7 +58,6 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Simplified validation
     if (!formData.username || !formData.password) {
       setMessage("Username and password are required.");
       setMessageType("error");
@@ -131,7 +130,6 @@ function RegisterForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Client-side validation
     if (formData.username.length < 3 || formData.username.length > 20) {
       setMessage("Username must be between 3 and 20 characters long.");
       setMessageType("error");

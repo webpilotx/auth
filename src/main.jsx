@@ -196,9 +196,6 @@ function RegisterForm() {
         if (data && data.token) {
           localStorage.setItem("token", data.token);
           window.location.href = "/";
-        } else {
-          setMessage("An unknown error occurred.");
-          setMessageType("error");
         }
       });
   };

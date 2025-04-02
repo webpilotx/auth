@@ -73,18 +73,17 @@ app.post("/auth/api/register", async (req, res) => {
     return res.status(400).send("Passwords do not match.");
   }
 
-  const [existingUser] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.username, username));
-  if (existingUser) {
-    return res.status(400).send("User already exists.");
-  }
-
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
-  await db.insert(usersTable).values({ username, passwordHash });
+  try {
+    await db.insert(usersTable).values({ username, passwordHash });
+  } catch (error) {
+    if (error.message.includes("UNIQUE constraint failed:")) {
+      return res.status(400).send("Username already exists.");
+    }
+    throw error;
+  }
 
   const token = await new SignJWT({ username })
     .setProtectedHeader({ alg: "HS256" })

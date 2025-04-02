@@ -21,7 +21,7 @@ function LoginForm() {
       .then((response) => response.json())
       .then((data) => {
         if (data.token) {
-          localStorage.setItem("token", data.token); // Store JWT in localStorage
+          localStorage.setItem("token", data.token);
           setMessage("Login successful.");
         } else {
           setMessage("Login failed.");

@@ -2,6 +2,6 @@
 
 git pull
 pnpm install
-npx run migrate
+npx drizzle-kit migrate
 pnpm run build
 sudo systemctl restart auth.service

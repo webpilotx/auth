@@ -48,7 +48,7 @@ This is a simple authentication app built with React. It provides user login and
 4. **Run Database Migrations**:
 
    ```bash
-   pnpm drizzle-kit migrate:apply
+   npx drizzle-kit migrate:apply
    ```
 
 5. **Run the Development Server**:
@@ -80,16 +80,6 @@ This is a simple authentication app built with React. It provides user login and
 - **Register**: `POST /auth/api/register`
   - Request Body: `{ username, password, confirmPassword, turnstileToken }`
   - Response: `{ token }`
-
-## Screenshots
-
-### Login Page
-
-![Login Page](https://via.placeholder.com/600x400?text=Login+Page)
-
-### Registration Page
-
-![Registration Page](https://via.placeholder.com/600x400?text=Registration+Page)
 
 ## License
 

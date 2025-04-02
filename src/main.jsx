@@ -99,8 +99,8 @@ function LoginForm() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-center mb-6">Login</h1>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold text-center">Login</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label="Username"
@@ -118,12 +118,14 @@ function LoginForm() {
           onChange={handleInputChange}
           required
         />
+        <div className="flex justify-center">
+          <Turnstile
+            sitekey={import.meta.env.VITE_TURNSTILE_SITEKEY}
+            onVerify={handleTurnstileVerify}
+          />
+        </div>
         <Button type="submit">Login</Button>
       </form>
-      <Turnstile
-        sitekey={import.meta.env.VITE_TURNSTILE_SITEKEY}
-        onVerify={handleTurnstileVerify}
-      />
       {message && <Alert message={message} type={messageType} />}
     </div>
   );
@@ -198,8 +200,8 @@ function RegisterForm() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-center mb-6">Register</h1>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold text-center">Register</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label="Username"
@@ -225,12 +227,14 @@ function RegisterForm() {
           onChange={handleInputChange}
           required
         />
+        <div className="flex justify-center">
+          <Turnstile
+            sitekey={import.meta.env.VITE_TURNSTILE_SITEKEY}
+            onVerify={handleTurnstileVerify}
+          />
+        </div>
         <Button type="submit">Register</Button>
       </form>
-      <Turnstile
-        sitekey={import.meta.env.VITE_TURNSTILE_SITEKEY}
-        onVerify={handleTurnstileVerify}
-      />
       {message && <Alert message={message} type={messageType} />}
     </div>
   );
@@ -240,9 +244,9 @@ function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div className="w-full max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <div className="w-full max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md space-y-6">
       {isLogin ? <LoginForm /> : <RegisterForm />}
-      <p className="text-center text-sm text-gray-600 mt-4">
+      <p className="text-center text-sm text-gray-600">
         {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
         <button
           onClick={() => setIsLogin(!isLogin)}

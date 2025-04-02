@@ -1,5 +1,6 @@
-import { StrictMode, useState } from "react";
+import { StrictMode, useCallback, useState } from "react";
 import { createRoot } from "react-dom/client";
+import Turnstile from "react-turnstile";
 import "./index.css";
 
 function Input({ label, type, name, value, onChange, required }) {
@@ -49,6 +50,7 @@ function LoginForm() {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("error");
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,6 +59,12 @@ function LoginForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!turnstileToken) {
+      setMessage("Please complete the Turnstile verification.");
+      setMessageType("error");
+      return;
+    }
 
     if (!formData.username || !formData.password) {
       setMessage("Username and password are required.");
@@ -67,7 +75,7 @@ function LoginForm() {
     fetch("/auth/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, turnstileToken }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -85,6 +93,10 @@ function LoginForm() {
         }
       });
   };
+
+  const handleTurnstileVerify = useCallback((token) => {
+    setTurnstileToken(token);
+  }, []);
 
   return (
     <div>
@@ -108,6 +120,10 @@ function LoginForm() {
         />
         <Button type="submit">Login</Button>
       </form>
+      <Turnstile
+        sitekey={import.meta.env.VITE_TURNSTILE_SITEKEY}
+        onVerify={handleTurnstileVerify}
+      />
       {message && <Alert message={message} type={messageType} />}
     </div>
   );
@@ -121,6 +137,7 @@ function RegisterForm() {
   });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("error");
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -129,6 +146,12 @@ function RegisterForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!turnstileToken) {
+      setMessage("Please complete the Turnstile verification.");
+      setMessageType("error");
+      return;
+    }
 
     if (formData.username.length < 3 || formData.username.length > 20) {
       setMessage("Username must be between 3 and 20 characters long.");
@@ -156,7 +179,7 @@ function RegisterForm() {
     fetch("/auth/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, turnstileToken }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -169,6 +192,10 @@ function RegisterForm() {
         }
       });
   };
+
+  const handleTurnstileVerify = useCallback((token) => {
+    setTurnstileToken(token);
+  }, []);
 
   return (
     <div>
@@ -200,6 +227,10 @@ function RegisterForm() {
         />
         <Button type="submit">Register</Button>
       </form>
+      <Turnstile
+        sitekey={import.meta.env.VITE_TURNSTILE_SITEKEY}
+        onVerify={handleTurnstileVerify}
+      />
       {message && <Alert message={message} type={messageType} />}
     </div>
   );

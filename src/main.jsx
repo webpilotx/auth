@@ -1,48 +1,115 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import reactLogo from "./assets/react.svg";
 import "./index.css";
-import viteLogo from "/vite.svg";
 
-function App() {
-  const [count, setCount] = useState(0);
+function AuthPage() {
+  const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [message, setMessage] = useState("");
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const endpoint = isLogin ? "/auth/api/login" : "/auth/api/register";
+    const body = isLogin
+      ? { username: formData.username, password: formData.password }
+      : formData;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const text = await response.text();
+      setMessage(text);
+    } catch (error) {
+      setMessage("An error occurred.");
+    }
+  };
 
   return (
-    <>
-      <div className="flex justify-center space-x-4 my-8">
-        <a href="https://vite.dev" target="_blank">
-          <img
-            src={viteLogo}
-            className="h-24 transition-transform hover:scale-110"
-            alt="Vite logo"
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-center mb-4">
+        {isLogin ? "Login" : "Register"}
+      </h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-gray-700">Username</label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border rounded-lg"
+            required
           />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img
-            src={reactLogo}
-            className="h-24 transition-transform hover:scale-110"
-            alt="React logo"
+        </div>
+        <div>
+          <label className="block text-gray-700">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border rounded-lg"
+            required
           />
-        </a>
-      </div>
-      <h1 className="text-4xl font-bold text-center mb-4">Vite + React</h1>
-      <div className="card bg-gray-100 p-6 rounded-lg shadow-md text-center">
+        </div>
+        {!isLogin && (
+          <div>
+            <label className="block text-gray-700">Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded-lg"
+              required
+            />
+          </div>
+        )}
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-          onClick={() => setCount((count) => count + 1)}
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
         >
-          count is {count}
+          {isLogin ? "Login" : "Register"}
         </button>
-        <p className="mt-4 text-gray-600">
-          Edit{" "}
-          <code className="bg-gray-200 px-1 py-0.5 rounded">src/main.jsx</code>{" "}
-          and save to test HMR
-        </p>
-      </div>
-      <p className="text-center text-gray-500 mt-6">
-        Click on the Vite and React logos to learn more
+      </form>
+      <p className="text-center text-gray-600 mt-4">
+        {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+        <button
+          onClick={() => {
+            setIsLogin(!isLogin);
+            setMessage("");
+          }}
+          className="text-blue-500 underline"
+        >
+          {isLogin ? "Register" : "Login"}
+        </button>
       </p>
-    </>
+      {message && (
+        <p className="mt-4 text-center text-gray-700 bg-gray-200 p-2 rounded">
+          {message}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <AuthPage />
+    </div>
   );
 }
 

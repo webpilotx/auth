@@ -220,7 +220,7 @@ function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <div className="w-full max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       {isLogin ? <LoginForm /> : <RegisterForm />}
       <p className="text-center text-sm text-gray-600 mt-4">
         {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}

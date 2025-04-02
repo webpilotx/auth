@@ -41,7 +41,7 @@ This is a simple authentication app built with React. It provides user login and
    ```
    VITE_TURNSTILE_SITEKEY=<your-turnstile-sitekey>
    TURNSTILE_SECRET_KEY=<your-turnstile-secret-key>
-   DB_FILE_NAME=<path-to-your-database-file>
+   DB_FILE_NAME=file:<path-to-your-database-file>
    JWT_SECRET=<your-jwt-secret>
    ```
 
@@ -67,7 +67,7 @@ This is a simple authentication app built with React. It provides user login and
    After building the client-side, run the server using:
 
    ```bash
-   node server.js
+   NODE_ENV=production PORT=5001 node server.js
    ```
 
 ## API Endpoints

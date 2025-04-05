@@ -35,7 +35,7 @@
   },
   "nodemonConfig": {
     "watch": [
-      "server.js",
+      "index.js",
       "schema.js"
     ]
   }

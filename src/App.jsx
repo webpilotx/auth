@@ -1,4 +1,13 @@
 import { useCallback, useState } from "react";
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  useSearchParams,
+  Navigate,
+} from "react-router-dom";
 import Turnstile from "react-turnstile";
 import "./index.css";
 
@@ -69,6 +78,8 @@ function LoginForm() {
   const [messageType, setMessageType] = useState("error");
   const [turnstileToken, setTurnstileToken] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -109,7 +120,8 @@ function LoginForm() {
 
     const data = await response.json();
     localStorage.setItem("token", data.token);
-    window.location.href = "/";
+    const redirectTo = searchParams.get("redirectTo") || "/";
+    navigate(redirectTo);
   };
 
   const handleTurnstileVerify = useCallback((token) => {
@@ -147,6 +159,12 @@ function LoginForm() {
         </Button>
       </form>
       {message && <Alert message={message} type={messageType} />}
+      <p className="text-center text-sm text-gray-600">
+        Don't have an account?{" "}
+        <Link to="/register" className="text-blue-600 hover:underline">
+          Register
+        </Link>
+      </p>
     </div>
   );
 }
@@ -161,6 +179,8 @@ function RegisterForm() {
   const [messageType, setMessageType] = useState("error");
   const [turnstileToken, setTurnstileToken] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -224,7 +244,8 @@ function RegisterForm() {
 
     const data = await response.json();
     localStorage.setItem("token", data.token);
-    window.location.href = "/";
+    const redirectTo = searchParams.get("redirectTo") || "/";
+    navigate(redirectTo);
   };
 
   const handleTurnstileVerify = useCallback((token) => {
@@ -270,24 +291,11 @@ function RegisterForm() {
         </Button>
       </form>
       {message && <Alert message={message} type={messageType} />}
-    </div>
-  );
-}
-
-function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true);
-
-  return (
-    <div className="w-full max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md space-y-6">
-      {isLogin ? <LoginForm /> : <RegisterForm />}
       <p className="text-center text-sm text-gray-600">
-        {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-        <button
-          onClick={() => setIsLogin(!isLogin)}
-          className="text-blue-600 hover:underline"
-        >
-          {isLogin ? "Register" : "Login"}
-        </button>
+        Already have an account?{" "}
+        <Link to="/login" className="text-blue-600 hover:underline">
+          Login
+        </Link>
       </p>
     </div>
   );
@@ -295,12 +303,18 @@ function AuthPage() {
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="flex items-center justify-center">
-        <AuthPage />
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center">
+          <Routes>
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<RegisterForm />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 

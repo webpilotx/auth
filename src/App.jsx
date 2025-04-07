@@ -121,7 +121,7 @@ function LoginForm() {
     const data = await response.json();
     localStorage.setItem("token", data.token);
     const redirectTo = searchParams.get("redirectTo") || "/";
-    navigate(redirectTo);
+    window.location.href = redirectTo; // Use location.href for redirection
   };
 
   const handleTurnstileVerify = useCallback((token) => {
@@ -245,7 +245,7 @@ function RegisterForm() {
     const data = await response.json();
     localStorage.setItem("token", data.token);
     const redirectTo = searchParams.get("redirectTo") || "/";
-    navigate(redirectTo);
+    window.location.href = redirectTo; // Use location.href for redirection
   };
 
   const handleTurnstileVerify = useCallback((token) => {

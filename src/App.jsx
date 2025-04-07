@@ -306,12 +306,16 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="flex items-center justify-center">
-          <Routes>
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/register" element={<RegisterForm />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
+        <div className="flex items-center justify-center mt-10">
+          {" "}
+          {/* Added mt-10 for gap */}
+          <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+            <Routes>
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </div>
         </div>
       </div>
     </Router>
